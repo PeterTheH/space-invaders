@@ -1,0 +1,33 @@
+use std::path;
+
+use ggez::*;
+struct State {
+    hero_ship: graphics::Image,
+}
+impl State {
+    fn new(ctx: &mut Context) -> GameResult<State> {
+        let hero_ship = graphics::Image::from_path(ctx, "/ship_player.png").unwrap();
+        let s = State { hero_ship };
+        Ok(s)
+    }
+}
+
+impl ggez::event::EventHandler<GameError> for State {
+    fn update(&mut self, ctx: &mut Context) -> Result<(), GameError> {
+        Ok(())
+    }
+    fn draw(&mut self, _ctx: &mut Context) -> Result<(), GameError> {
+        Ok(())
+    }
+}
+
+fn main() {
+    let c = conf::Conf::new();
+    let (mut ctx, event_loop) = ContextBuilder::new("spaceship", "Pesho153Python")
+        .default_conf(c)
+        .add_resource_path(path::PathBuf::from("./resources"))
+        .build()
+        .unwrap();
+    let state = State::new(&mut ctx).unwrap();
+    event::run(ctx, event_loop, state);
+}

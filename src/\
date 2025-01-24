@@ -1,0 +1,172 @@
+use std::path;
+
+use ggez::conf;
+use ggez::event;
+use ggez::glam::Vec2;
+use ggez::graphics;
+use ggez::graphics::FilterMode;
+use ggez::input::keyboard::KeyCode;
+use ggez::input::keyboard::KeyInput;
+use ggez::{Context, ContextBuilder, GameError, GameResult};
+
+#[derive(Debug)]
+enum TypeActor {
+    Player,
+    Enemy,
+    Shot,
+}
+
+#[derive(Debug)]
+struct Actor {
+    tag: TypeActor,
+    pos: Vec2,
+    life_points: f32,
+    box_size: f32,
+}
+
+struct Assets {
+    player_sprite: graphics::Image,
+    enemy_sprite: graphics::Image,
+    shot_sprite: graphics::Image,
+}
+
+fn create_player() -> Actor {
+    Actor {
+        tag: TypeActor::Player,
+        pos: Vec2::ZERO,
+        life_points: 1.0,
+        box_size: 12.0,
+    }
+}
+
+impl Assets {
+    fn new(ctx: &mut Context) -> GameResult<Assets> {
+        let player_sprite = graphics::Image::from_path(ctx, "/ship_player.png")?;
+        let enemy_sprite = graphics::Image::from_path(ctx, "/ship_player.png")?;
+        let shot_sprite = graphics::Image::from_path(ctx, "/ship_player.png")?;
+        Ok(Assets {
+            player_sprite,
+            enemy_sprite,
+            shot_sprite,
+        })
+    }
+    fn actor_image(&self, actor: &Actor) -> &graphics::Image {
+        match actor.tag {
+            TypeActor::Player => &self.player_sprite,
+            TypeActor::Enemy => &self.enemy_sprite,
+            TypeActor::Shot => &self.shot_sprite,
+        }
+    }
+}
+
+struct InputState {
+    x_pos: f32,
+    y_pos: f32,
+    fire: bool,
+}
+
+impl Default for InputState {
+    fn default() -> Self {
+        InputState {
+            x_pos: 0.0,
+            y_pos: 0.0,
+            fire: false,
+        }
+    }
+}
+
+struct State {
+    player: Actor,
+    assets: Assets,
+    input: InputState,
+}
+
+impl State {
+    fn new(ctx: &mut Context) -> GameResult<State> {
+        let player = create_player();
+        let assets = Assets::new(ctx)?;
+        let input = InputState::default();
+        Ok(State {
+            player,
+            assets,
+            input,
+        })
+    }
+}
+
+fn draw_actor(
+    assets: &mut Assets,
+    canvas: &mut graphics::Canvas,
+    actor: &Actor,
+    coords: (f32, f32),
+) {
+    let image = assets.actor_image(actor);
+    let pos = Vec2::new(coords.0, coords.1);
+    let drawparams = graphics::DrawParam::new()
+        .dest(pos)
+        .scale(Vec2::new(5.0, 5.0));
+    canvas.draw(image, drawparams);
+}
+
+impl ggez::event::EventHandler<GameError> for State {
+    fn update(&mut self, ctx: &mut Context) -> Result<(), GameError> {
+        Ok(())
+    }
+    fn draw(&mut self, ctx: &mut Context) -> Result<(), GameError> {
+        let mut canvas =
+            graphics::Canvas::from_frame(ctx, graphics::Color::from([0.1, 0.2, 0.3, 1.0]));
+        canvas.set_sampler(graphics::Sampler::nearest_clamp());
+        {
+            let assets = &mut self.assets;
+            let player = &mut self.player;
+
+            draw_actor(
+                assets,
+                &mut canvas,
+                player,
+                (self.input.x_pos, self.input.y_pos),
+            );
+        }
+
+        canvas.finish(ctx)?;
+        Ok(())
+    }
+    fn key_down_event(
+        &mut self,
+        ctx: &mut Context,
+        input: ggez::input::keyboard::KeyInput,
+        _repeated: bool,
+    ) -> GameResult {
+        match input.keycode {
+            Some(KeyCode::Right) => self.input.x_pos += 10.0,
+            Some(KeyCode::Left) => self.input.x_pos -= 10.0,
+            Some(KeyCode::Down) => self.input.y_pos += 10.0,
+            Some(KeyCode::Up) => self.input.y_pos -= 10.0,
+            _ => (),
+        }
+        Ok(())
+    }
+
+    fn key_up_event(
+        &mut self,
+        _ctx: &mut Context,
+        input: ggez::input::keyboard::KeyInput,
+    ) -> GameResult {
+        match input.keycode {
+            _ => (),
+        }
+        Ok(())
+    }
+}
+
+fn main() {
+    let c =
+        conf::Conf::new().window_mode(ggez::conf::WindowMode::default().dimensions(500.0, 400.0));
+    let (mut ctx, event_loop) = ContextBuilder::new("spaceship", "Pesho153Python")
+        .default_conf(c)
+        .add_resource_path(path::PathBuf::from("./resources"))
+        .build()
+        .unwrap();
+    let state = State::new(&mut ctx).unwrap();
+    event::run(ctx, event_loop, state);
+}
