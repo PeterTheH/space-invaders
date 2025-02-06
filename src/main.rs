@@ -8,6 +8,9 @@ mod helpers;
 mod state;
 use std::path;
 
+#[cfg(test)]
+mod tests;
+
 use ggez::conf;
 use ggez::event;
 use ggez::glam::Vec2;
