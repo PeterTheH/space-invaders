@@ -1,5 +1,3 @@
-use core::alloc;
-
 use ggez::glam::Vec2;
 use rand::Rng;
 
@@ -19,7 +17,7 @@ pub enum Subtype {
     BasicEnemy,
     KamikazeEnemy,
     BossEnemy,
-    TankEnemy,
+    //TankEnemy,
     BasicShot,
     EnemyShot,
     AsteroidShot,

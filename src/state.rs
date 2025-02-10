@@ -212,7 +212,16 @@ impl State {
                 if distance_to_enemy.length() < enemy.box_size + shot.box_size {
                     match shot.subtag {
                         Subtype::BasicShot | Subtype::AsteroidShot => {
-                            enemy.life_points -= 1.0;
+                            match enemy.subtag {
+                                Subtype::BasicEnemy | Subtype::KamikazeEnemy => {
+                                    enemy.life_points -= 1.0;
+                                }
+                                Subtype::BossEnemy => {
+                                    shot.life_points = 0.0;
+                                    enemy.life_points -= 3.0;
+                                }
+                                _ => (),
+                            }
                             if let Subtype::BasicShot = shot.subtag {
                                 shot.life_points = 0.0;
                             }
@@ -298,7 +307,7 @@ impl State {
                         //sets boss bool to false if boss is dead
                         if enemy.life_points <= -1.0 {
                             match enemy.subtag {
-                                Subtype::BossEnemy | Subtype::TankEnemy => {
+                                Subtype::BossEnemy /*| Subtype::TankEnemy*/ => {
                                     self.is_boss_present = false;
                                 }
                                 Subtype::BasicEnemy | Subtype::KamikazeEnemy => {
@@ -352,7 +361,7 @@ impl State {
     }
 
     fn spawn_boss(&mut self) {
-        if ((self.current_score.ceil() % 50.0) == 0.0) & (!self.is_boss_present) {
+        if ((self.current_score.ceil() % 40.0) == 0.0) & (!self.is_boss_present) {
             self.is_boss_present = true;
             let boss = create_boss(Subtype::BossEnemy);
             self.enemies.push(boss);

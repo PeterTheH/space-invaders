@@ -13,7 +13,7 @@ pub struct Assets {
     pub shield_pickup_sprite: graphics::Image,
     pub shield_ui_sprite: graphics::Image,
     pub boss_basic_sprite: graphics::Image,
-    pub boss_tank_sprite: graphics::Image,
+    //pub boss_tank_sprite: graphics::Image,
     pub asteroid_sprite: graphics::Image,
     //pub shoot_sound: audio::Source,
 }
@@ -29,7 +29,7 @@ impl Assets {
         let shield_pickup_sprite = graphics::Image::from_path(ctx, "/shield_pickup.png")?;
         let shield_ui_sprite = graphics::Image::from_path(ctx, "/shield_UI.png")?;
         let boss_basic_sprite = graphics::Image::from_path(ctx, "/boss_purple.png")?;
-        let boss_tank_sprite = graphics::Image::from_path(ctx, "/boss_tank.png")?;
+        //let boss_tank_sprite = graphics::Image::from_path(ctx, "/boss_tank.png")?;
         let asteroid_sprite = graphics::Image::from_path(ctx, "/asteroid_shot.png")?;
         //let shoot_sound =
         //    audio::Source::new(ctx, "/Bluezone_BC0295_sci_fi_weapon_gun_shot_008.wav")?;
@@ -45,7 +45,7 @@ impl Assets {
             shield_pickup_sprite,
             shield_ui_sprite,
             boss_basic_sprite,
-            boss_tank_sprite,
+            //boss_tank_sprite,
             asteroid_sprite,
             //shoot_sound,
         })
@@ -57,7 +57,7 @@ impl Assets {
                 Subtype::KamikazeEnemy => &self.kamikaze_enemy_sprite,
                 Subtype::BasicEnemy => &self.basic_enemy_sprite,
                 Subtype::BossEnemy => &self.boss_basic_sprite,
-                Subtype::TankEnemy => &self.boss_tank_sprite,
+                //Subtype::TankEnemy => &self.boss_tank_sprite,
                 _ => &self.player_sprite,
             },
             TypeActor::Shot => match actor.subtag {
